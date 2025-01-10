@@ -1,27 +1,24 @@
 import React, { useState } from "react";
 
 const RewardsRedemption = () => {
-  // States for managing views, redeemed items, points, and confirmation modal
-  const [currentView, setCurrentView] = useState("redeem"); // Tracks the current active tab
-  const [redeemed, setRedeemed] = useState([]); // Stores a history of redeemed or recycled items
-  const [points, setPoints] = useState(500); // User's current points
-  const [confirmItem, setConfirmItem] = useState(null); // Stores the item selected for confirmation
+  const [currentView, setCurrentView] = useState("redeem");
+  const [redeemed, setRedeemed] = useState([]);
+  const [points, setPoints] = useState(500);
+  const [confirmItem, setConfirmItem] = useState(null);
 
-  // Card Component - A reusable UI container
   const Card = ({ children, className }) => (
     <div className={`bg-white p-4 rounded-lg shadow-md ${className}`}>
       {children}
     </div>
   );
 
-  // Button Component - A reusable button with styles
   const Button = ({ children, onClick, variant = "default", disabled = false, className }) => {
     const baseStyle = "rounded-lg px-4 py-2 font-medium focus:outline-none transition";
     const variantStyle =
       variant === "default"
-        ? "bg-cyan-500 text-white hover:bg-cyan-600" // Default button style
-        : "bg-white text-cyan-500 border border-cyan-500 hover:bg-cyan-100"; // Outline button style
-    const disabledStyle = disabled ? "opacity-50 cursor-not-allowed" : ""; // Disabled button style
+        ? "bg-cyan-500 text-white hover:bg-cyan-600"
+        : "bg-white text-cyan-500 border border-cyan-500 hover:bg-cyan-100";
+    const disabledStyle = disabled ? "opacity-50 cursor-not-allowed" : "";
     return (
       <button
         className={`${baseStyle} ${variantStyle} ${disabledStyle} ${className}`}
@@ -33,45 +30,39 @@ const RewardsRedemption = () => {
     );
   };
 
-  // Items available for redemption
   const redeemItems = [
     { id: 1, name: "Seaweed Shopping Bag", points: 250, description: "1 bag" },
     { id: 2, name: "Food Container", points: 150, description: "1 container" },
     { id: 3, name: "Small Packet", points: 50, description: "5 packets" }
   ];
 
-  // Items available for recycling
   const recycleItems = [
     { id: 4, name: "Plastic Bottles", points: 10, description: "Should be emptied and clean" },
     { id: 5, name: "Plastic Bags", points: 5, description: "Should be clean" }
   ];
 
-  // Handles redeeming an item
   const handleRedeem = (item) => {
     if (points >= item.points) {
-      // Deduct points and add item to redeemed list
       setPoints(points - item.points);
       setRedeemed([
         {
           ...item,
-          date: new Date().toLocaleDateString(), // Add redemption date
-          type: "redeem" // Specify action type
+          date: new Date().toLocaleDateString(),
+          type: "redeem"
         },
         ...redeemed
       ]);
     }
-    setConfirmItem(null); // Close confirmation modal
+    setConfirmItem(null);
   };
 
-  // Handles recycling an item
   const handleRecycle = (item) => {
-    // Add points and add item to redeemed list
     setPoints(points + item.points);
     setRedeemed([
       {
         ...item,
-        date: new Date().toLocaleDateString(), // Add recycling date
-        type: "recycle" // Specify action type
+        date: new Date().toLocaleDateString(),
+        type: "recycle"
       },
       ...redeemed
     ]);
@@ -79,11 +70,9 @@ const RewardsRedemption = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col bg-green-100">
-      {/* Header Section */}
       <header className="flex items-center justify-between px-8 py-6">
         <h1 className="text-cyan-500 text-3xl font-light">Rewards Redemption</h1>
         <div className="flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md border border-green-300">
-          {/* Points Display */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -96,9 +85,7 @@ const RewardsRedemption = () => {
         </div>
       </header>
 
-      {/* Navigation Buttons */}
       <div className="flex justify-center gap-4 mb-8">
-        {/* Tabs to switch views */}
         <Button
           onClick={() => setCurrentView("redeem")}
           variant={currentView === "redeem" ? "default" : "outline"}
@@ -122,9 +109,7 @@ const RewardsRedemption = () => {
         </Button>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-grow overflow-y-auto px-8">
-        {/* Redeem View */}
         {currentView === "redeem" && (
           <div className="space-y-4">
             {redeemItems.map((item) => (
@@ -136,8 +121,8 @@ const RewardsRedemption = () => {
                     <p className="text-sm">• {item.points} points</p>
                   </div>
                   <Button
-                    onClick={() => setConfirmItem(item)} // Open confirmation modal
-                    disabled={points < item.points} // Disable if insufficient points
+                    onClick={() => setConfirmItem(item)}
+                    disabled={points < item.points}
                   >
                     Redeem now
                   </Button>
@@ -147,7 +132,6 @@ const RewardsRedemption = () => {
           </div>
         )}
 
-        {/* Recycle View */}
         {currentView === "recycle" && (
           <div className="space-y-4">
             {recycleItems.map((item) => (
@@ -165,7 +149,6 @@ const RewardsRedemption = () => {
           </div>
         )}
 
-        {/* History View */}
         {currentView === "history" && (
           <Card className="border border-cyan-200">
             <div className="space-y-4">
@@ -178,7 +161,11 @@ const RewardsRedemption = () => {
                       </p>
                       <p className="text-sm text-gray-500">• {item.date}</p>
                     </div>
-                    <p className="text-sm">
+                    <p
+                      className={`text-sm font-semibold ${
+                        item.type === "redeem" ? "text-[#0868ac]" : "text-[#a8ddb5]"
+                      }`}
+                    >
                       {item.type === "redeem" ? "-" : "+"} {item.points} points
                     </p>
                   </div>
@@ -191,7 +178,6 @@ const RewardsRedemption = () => {
         )}
       </div>
 
-      {/* Confirmation Modal */}
       {confirmItem && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
