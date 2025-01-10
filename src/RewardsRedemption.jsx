@@ -1,24 +1,33 @@
 import React, { useState } from "react";
 
 const RewardsRedemption = () => {
+  // State to track the current view (redeem, recycle, or history)
   const [currentView, setCurrentView] = useState("redeem");
+
+  // State to track redeemed/recycled items for history
   const [redeemed, setRedeemed] = useState([]);
+
+  // State to track the user's current points
   const [points, setPoints] = useState(500);
+
+  // State to track the currently selected item for confirmation
   const [confirmItem, setConfirmItem] = useState(null);
 
+  // Reusable card component for displaying items
   const Card = ({ children, className }) => (
     <div className={`bg-white p-4 rounded-lg shadow-md ${className}`}>
       {children}
     </div>
   );
 
+  // Reusable button component with styling and behavior for different variants
   const Button = ({ children, onClick, variant = "default", disabled = false, className }) => {
     const baseStyle = "rounded-lg px-4 py-2 font-medium focus:outline-none transition";
     const variantStyle =
       variant === "default"
-        ? "bg-cyan-500 text-white hover:bg-cyan-600"
-        : "bg-white text-cyan-500 border border-cyan-500 hover:bg-cyan-100";
-    const disabledStyle = disabled ? "opacity-50 cursor-not-allowed" : "";
+        ? "bg-cyan-500 text-white hover:bg-cyan-600" // Default button styling
+        : "bg-white text-cyan-500 border border-cyan-500 hover:bg-cyan-100"; // Outline button styling
+    const disabledStyle = disabled ? "opacity-50 cursor-not-allowed" : ""; // Styling for disabled buttons
     return (
       <button
         className={`${baseStyle} ${variantStyle} ${disabledStyle} ${className}`}
@@ -30,48 +39,60 @@ const RewardsRedemption = () => {
     );
   };
 
+  // List of items available for redemption
   const redeemItems = [
     { id: 1, name: "Seaweed Shopping Bag", points: 250, description: "1 bag" },
     { id: 2, name: "Food Container", points: 150, description: "1 container" },
     { id: 3, name: "Small Packet", points: 50, description: "5 packets" }
   ];
 
+  // List of items available for recycling
   const recycleItems = [
     { id: 4, name: "Plastic Bottles", points: 10, description: "Should be emptied and clean" },
     { id: 5, name: "Plastic Bags", points: 5, description: "Should be clean" }
   ];
 
+  // Handles redeeming an item
   const handleRedeem = (item) => {
     if (points >= item.points) {
+      // Deduct the item's points from the user's total
       setPoints(points - item.points);
+
+      // Add the redeemed item to the history
       setRedeemed([
         {
           ...item,
-          date: new Date().toLocaleDateString(),
-          type: "redeem"
+          date: new Date().toLocaleDateString(), // Add the current date
+          type: "redeem" // Mark it as a redemption
         },
-        ...redeemed
+        ...redeemed // Keep the previous history
       ]);
     }
-    setConfirmItem(null);
+    setConfirmItem(null); // Close the confirmation modal
   };
 
+  // Handles recycling an item
   const handleRecycle = (item) => {
+    // Add the item's points to the user's total
     setPoints(points + item.points);
+
+    // Add the recycled item to the history
     setRedeemed([
       {
         ...item,
-        date: new Date().toLocaleDateString(),
-        type: "recycle"
+        date: new Date().toLocaleDateString(), // Add the current date
+        type: "recycle" // Mark it as recycling
       },
-      ...redeemed
+      ...redeemed // Keep the previous history
     ]);
   };
 
   return (
     <div className="w-screen h-screen flex flex-col bg-green-100">
+      {/* Header Section */}
       <header className="flex items-center justify-between px-8 py-6">
         <h1 className="text-cyan-500 text-3xl font-light">Rewards Redemption</h1>
+        {/* Display the user's current points */}
         <div className="flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md border border-green-300">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -85,41 +106,44 @@ const RewardsRedemption = () => {
         </div>
       </header>
 
+      {/* Navigation Section */}
       <div className="flex justify-center gap-4 mb-8">
+        {/* Tabs to switch between views */}
         <Button
           onClick={() => setCurrentView("redeem")}
           variant={currentView === "redeem" ? "default" : "outline"}
-          className={currentView === "redeem" ? "bg-cyan-500 text-white" : ""}
         >
           Redeem Rewards
         </Button>
         <Button
           onClick={() => setCurrentView("recycle")}
           variant={currentView === "recycle" ? "default" : "outline"}
-          className={currentView === "recycle" ? "bg-cyan-500 text-white" : ""}
         >
           Recycle & Earn
         </Button>
         <Button
           onClick={() => setCurrentView("history")}
           variant={currentView === "history" ? "default" : "outline"}
-          className={currentView === "history" ? "bg-cyan-500 text-white" : ""}
         >
           History
         </Button>
       </div>
 
+      {/* Content Section */}
       <div className="flex-grow overflow-y-auto px-8">
+        {/* Redeem View */}
         {currentView === "redeem" && (
           <div className="space-y-4">
             {redeemItems.map((item) => (
               <Card key={item.id} className="border border-cyan-200">
                 <div className="flex justify-between items-center">
+                  {/* Display item details */}
                   <div>
                     <h3 className="text-lg font-medium">{item.name}</h3>
                     <p className="text-sm text-gray-500">{item.description}</p>
                     <p className="text-sm">• {item.points} points</p>
                   </div>
+                  {/* Redeem button */}
                   <Button
                     onClick={() => setConfirmItem(item)}
                     disabled={points < item.points}
@@ -132,16 +156,19 @@ const RewardsRedemption = () => {
           </div>
         )}
 
+        {/* Recycle View */}
         {currentView === "recycle" && (
           <div className="space-y-4">
             {recycleItems.map((item) => (
               <Card key={item.id} className="border border-cyan-200">
                 <div className="flex justify-between items-center">
+                  {/* Display item details */}
                   <div>
                     <h3 className="text-lg font-medium">{item.name}</h3>
                     <p className="text-sm text-gray-500">{item.description}</p>
                     <p className="text-sm">+ {item.points} points</p>
                   </div>
+                  {/* Recycle button */}
                   <Button onClick={() => handleRecycle(item)}>Recycle now</Button>
                 </div>
               </Card>
@@ -149,18 +176,21 @@ const RewardsRedemption = () => {
           </div>
         )}
 
+        {/* History View */}
         {currentView === "history" && (
           <Card className="border border-cyan-200">
             <div className="space-y-4">
               {redeemed.length > 0 ? (
                 redeemed.map((item, index) => (
                   <div key={index} className="flex justify-between items-center">
+                    {/* Display redeemed/recycled item details */}
                     <div>
                       <p>
                         {item.name} {item.type === "redeem" ? "redeemed" : "recycled"}
                       </p>
                       <p className="text-sm text-gray-500">• {item.date}</p>
                     </div>
+                    {/* Points with color based on type */}
                     <p
                       className={`text-sm font-semibold ${
                         item.type === "redeem" ? "text-[#0868ac]" : "text-[#a8ddb5]"
@@ -178,6 +208,7 @@ const RewardsRedemption = () => {
         )}
       </div>
 
+      {/* Confirmation Modal */}
       {confirmItem && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -187,9 +218,11 @@ const RewardsRedemption = () => {
               <b>{confirmItem.points} points</b>?
             </p>
             <div className="flex justify-end gap-4">
+              {/* Cancel button */}
               <Button onClick={() => setConfirmItem(null)} variant="outline">
                 Cancel
               </Button>
+              {/* Confirm button */}
               <Button onClick={() => handleRedeem(confirmItem)}>Confirm Redemption</Button>
             </div>
           </div>
