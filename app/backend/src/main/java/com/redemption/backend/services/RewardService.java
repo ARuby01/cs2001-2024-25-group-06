@@ -54,7 +54,7 @@ public class RewardService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    // ✅ Redeem reward (no history saved)
+    // ✅ Redeem reward
     public String redeemReward(Long userId, Long rewardId) {
         User user = getUserById(userId);
         Reward reward = getRewardById(rewardId);

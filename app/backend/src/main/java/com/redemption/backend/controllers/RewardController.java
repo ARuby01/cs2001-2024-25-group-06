@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller to handle all reward-related HTTP requests.
+ */
 @RestController
 @RequestMapping("/api/rewards")
 public class RewardController {
@@ -16,46 +19,84 @@ public class RewardController {
     @Autowired
     private RewardService rewardService;
 
-    // ✅ Get all rewards
+    /**
+     * GET /list
+     * Fetches all rewards from the database.
+     * @return a list of all Reward objects.
+     */
     @GetMapping("/list")
     public List<Reward> getAllRewards() {
         return rewardService.getAllRewards();
     }
 
-    // ✅ Get a specific reward by ID
+    /**
+     * GET /{rewardId}
+     * Fetches a specific reward by its ID.
+     * @param rewardId the ID of the reward to fetch.
+     * @return the Reward object if found.
+     */
     @GetMapping("/{rewardId}")
     public Reward getRewardById(@PathVariable Long rewardId) {
         return rewardService.getRewardById(rewardId);
     }
 
-    // ✅ Create a new reward
+    /**
+     * POST /create
+     * Creates a new reward and saves it to the database.
+     * @param reward the reward data sent in the request body.
+     * @return the newly created Reward object.
+     */
     @PostMapping("/create")
     public ResponseEntity<Reward> createReward(@RequestBody Reward reward) {
         Reward savedReward = rewardService.createReward(reward);
         return ResponseEntity.ok(savedReward);
     }
 
-    // ✅ Update an existing reward
+    /**
+     * PUT /{rewardId}
+     * Updates the details of an existing reward.
+     * @param rewardId the ID of the reward to update.
+     * @param rewardDetails the updated reward information.
+     * @return the updated Reward object.
+     */
     @PutMapping("/{rewardId}")
     public ResponseEntity<Reward> updateReward(@PathVariable Long rewardId, @RequestBody Reward rewardDetails) {
         Reward updatedReward = rewardService.updateReward(rewardId, rewardDetails);
         return ResponseEntity.ok(updatedReward);
     }
 
-    // ✅ Delete a reward
+    /**
+     * DELETE /{rewardId}
+     * Deletes a reward by its ID.
+     * @param rewardId the ID of the reward to delete.
+     * @return a success message if deletion is successful.
+     */
     @DeleteMapping("/{rewardId}")
     public ResponseEntity<String> deleteReward(@PathVariable Long rewardId) {
         rewardService.deleteReward(rewardId);
         return ResponseEntity.ok("Reward deleted successfully!");
     }
 
-    // ✅ Get user details by userId
+    /**
+     * GET /user/{userId}
+     * Fetches user details based on user ID.
+     * This is used during redemption to validate user data.
+     * @param userId the ID of the user.
+     * @return the User object.
+     */
     @GetMapping("/user/{userId}")
     public User getUser(@PathVariable Long userId) {
         return rewardService.getUserById(userId);
     }
 
-    // ✅ Redeem a reward (deducts points server-side)
+    /**
+     * POST /redeem
+     * Handles the logic of redeeming a reward for a specific user.
+     * Deducts the required points from the user and processes the reward.
+     * @param userId the ID of the user redeeming the reward.
+     * @param rewardId the ID of the reward being redeemed.
+     * @return a success message.
+     */
     @PostMapping("/redeem")
     public ResponseEntity<String> redeemReward(@RequestParam Long userId, @RequestParam Long rewardId) {
         String response = rewardService.redeemReward(userId, rewardId);

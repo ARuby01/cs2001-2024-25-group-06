@@ -1,31 +1,55 @@
 import React, { useState, useEffect } from "react";
-import "./RewardsRedemption.css";
+import "./RewardsRedemption.css"; // Import custom CSS for styling
 
 const RewardsRedemption = () => {
+  // Store user information
   const [user, setUser] = useState(null);
+
+  // Store user points
   const [points, setPoints] = useState(0);
+
+  // Store the list of available rewards fetched from the backend
   const [rewards, setRewards] = useState([]);
+
+  // Store the list of recyclable items fetched from the backend
   const [recyclables, setRecyclables] = useState([]);
+
+  // Determine the current tab view: 'redeem' or 'recycle'
   const [currentView, setCurrentView] = useState("redeem");
+
+  // Hold the selected reward item when confirming redemption
   const [confirmItem, setConfirmItem] = useState(null);
+
+  // Hold the selected recycle item when uploading proof
   const [confirmRecycle, setConfirmRecycle] = useState(null);
+
+  // Store the image file uploaded as proof for recycling
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // Store a success message to show feedback to the user
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Hardcoded userId for now (ideally dynamic in production)
   const userId = 1;
 
+  // Fetch user data and items when the component first loads
   useEffect(() => {
     fetchUserData();
+    
+    // Fetch all rewards
     fetch("http://localhost:8080/api/rewards/list")
       .then((res) => res.json())
       .then(setRewards)
       .catch((err) => console.error("Error fetching rewards:", err));
 
+    // Fetch all recyclable items
     fetch("http://localhost:8080/api/recyclable-items/list")
       .then((res) => res.json())
       .then(setRecyclables)
       .catch((err) => console.error("Error fetching recyclables:", err));
   }, []);
 
+  // Function to fetch the current user's data
   const fetchUserData = async () => {
     const res = await fetch(`http://localhost:8080/api/users/${userId}`);
     const data = await res.json();
@@ -33,11 +57,13 @@ const RewardsRedemption = () => {
     setPoints(data.points);
   };
 
+  // Display a success message and auto-clear it after 3 seconds
   const showSuccess = (message) => {
     setSuccessMessage(message);
     setTimeout(() => setSuccessMessage(""), 3000);
   };
 
+  // Handle redemption confirmation and API call
   const handleRedeemConfirm = async () => {
     if (confirmItem) {
       try {
@@ -46,24 +72,26 @@ const RewardsRedemption = () => {
           { method: "POST" }
         );
         const message = await res.text();
-
-        await fetchUserData(); // Re-fetch updated points
-        setConfirmItem(null);
-        showSuccess(message); // e.g., "Successfully redeemed Seaweed Shopping Bag!"
+        await fetchUserData(); // Refresh user points
+        setConfirmItem(null); // Close modal
+        showSuccess(message); // Show feedback
       } catch (error) {
         console.error("Error redeeming reward:", error);
       }
     }
   };
 
+  // Open recycle modal when user clicks 'Recycle'
   const handleRecycle = (item) => {
     setConfirmRecycle(item);
   };
 
+  // Store the file uploaded by the user for recycling
   const handleImageUpload = (event) => {
     setSelectedFile(event.target.files[0]);
   };
 
+  // Submit recycling proof and process backend logic
   const confirmRecycleProcess = async () => {
     if (selectedFile && confirmRecycle) {
       try {
@@ -71,10 +99,9 @@ const RewardsRedemption = () => {
           `http://localhost:8080/api/recyclable-items/recycle?userId=${userId}&itemId=${confirmRecycle.itemId}`,
           { method: "POST" }
         );
-
-        await fetchUserData(); // Re-fetch updated points
-        setConfirmRecycle(null);
-        setSelectedFile(null);
+        await fetchUserData(); // Refresh user points
+        setConfirmRecycle(null); // Close modal
+        setSelectedFile(null); // Clear file selection
         showSuccess(`Recycled ${confirmRecycle.itemName} and earned points!`);
       } catch (error) {
         console.error("Error processing recycling:", error);
@@ -82,6 +109,7 @@ const RewardsRedemption = () => {
     }
   };
 
+  // Match item names to image file paths
   const getImageSrc = (name) => {
     const imageMap = {
       "Seaweed Shopping Bag": "/images/seaweed-bag.png",
@@ -95,6 +123,7 @@ const RewardsRedemption = () => {
 
   return (
     <div className="rewards-container">
+      {/* Top section with app title, user greeting, and points */}
       <div className="top-header">
         <div className="top-left">
           <h1 className="app-title">Rewards Redemption</h1>
@@ -109,8 +138,10 @@ const RewardsRedemption = () => {
         </div>
       </div>
 
+      {/* Show success banner when applicable */}
       {successMessage && <div className="success-banner">{successMessage}</div>}
 
+      {/* Tabs to switch between redeem and recycle views */}
       <div className="toggle-buttons-row">
         <button
           className={`toggle-button ${currentView === "redeem" ? "active" : ""}`}
@@ -126,6 +157,7 @@ const RewardsRedemption = () => {
         </button>
       </div>
 
+      {/* Redeem view */}
       {currentView === "redeem" && (
         <div className="map-container">
           {rewards.map((reward) => (
@@ -153,6 +185,7 @@ const RewardsRedemption = () => {
         </div>
       )}
 
+      {/* Recycle view */}
       {currentView === "recycle" && (
         <div className="map-container">
           {recyclables.map((item) => (
@@ -179,6 +212,7 @@ const RewardsRedemption = () => {
         </div>
       )}
 
+      {/* Redemption Confirmation Modal */}
       {confirmItem && (
         <div className="modal-overlay">
           <div className="modal">
@@ -199,6 +233,7 @@ const RewardsRedemption = () => {
         </div>
       )}
 
+      {/* Recycle Proof Upload Modal */}
       {confirmRecycle && (
         <div className="modal-overlay">
           <div className="modal">
