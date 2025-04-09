@@ -1,0 +1,151 @@
+body {
+    background-color: #f0f2f5;
+  }
+  
+  /* Main container */
+  .leaderboard {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  /* Title */
+  .leaderboard h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Search input */
+  .search-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  table thead tr {
+    background-color: white;
+  }
+  
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: white;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  /* Top 3 players */
+  tbody tr:nth-child(1) {
+    background-color: #fff3cd; /* Gold for 1st place */
+  }
+  
+  tbody tr:nth-child(2) {
+    background-color: #e9ecef; /* Silver for 2nd place */
+  }
+  
+  tbody tr:nth-child(3) {
+    background-color: #f8d7da; /* Bronze for 3rd place */
+  }
+  
+  /* All other players (4th and beyond) */
+  tbody tr:nth-child(n+4) {
+    background-color: white;
+  }
+  
+  /* Loading message */
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+  
+  .error {
+    text-align: center;
+    padding: 20px;
+    color: #ff0000;
+    background-color: #fff0f0;
+  }
+  
+  .login-message {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .signup-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .signup-button:hover {
+    background-color: #45a049;
+  }
+  
+  .rank-number {
+    font-weight: bold;
+    margin-right: 8px;
+  }
+  
+  .medal {
+    font-size: 1.2em;
+  }
+  
+  .auth-section {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+  }
+  
+  .auth-section p {
+    margin: 0;
+    color: #666;
+  }
+  
+  .auth-section a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 5px;
+  }
+  
+  .auth-section a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .leaderboard {
+      padding: 10px;
+    }
+  
+    .leaderboard th,
+    .leaderboard td {
+      padding: 10px;
+      font-size: 1em;
+    }
+  
+    .leaderboard h2 {
+      font-size: 2em;
+    }
+  }
+  
